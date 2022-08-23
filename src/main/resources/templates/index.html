@@ -7,5 +7,8 @@
 <body>
 <h1>首页</h1>
 <p th:text="${msg}"></p>
+<p>这是一个首页，不用登录就可以看到的界面</p>
+<hr>
+<a th:href="@{/user/add}">add</a>  |<a th:href="@{/user/update}">update</a>   |  <a th:href="@{/toLogin}">主动登录</a>
 </body>
 </html>
