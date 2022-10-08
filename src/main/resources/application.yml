@@ -1,20 +1,45 @@
 server:
   port: 8080
 
-
-#springboot的配置
 spring:
-  #定义数据源
+
   datasource:
-    url: jdbc:mysql://localhost:3306/mybatis?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    type: com.alibaba.druid.pool.DruidDataSource
     username: root
     password: 123456
+    #加入时区报错serverTimezone=UTC&
+    #这里连接数据库
+    url: jdbc:mysql://localhost:3306/mybatis?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
-    # 使用druid数据源
-    type: com.alibaba.druid.pool.DruidDataSource
 
+    #p32
+    #SpringBoot默认是不注入这些的，需要自己绑定
+    #druid数据源专有配置,一般默认直接可以拿过来用
+    #
 
-mybatis-plus:
+    druid:
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      #一分钟后自动断掉
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+
+        #配置 监控统计 拦截的filters，stat：监控统计、log4j：日志记录、wall：防御sql注入
+        #如果允许报错，java.lang.ClassNotFoundException: org.apache.Log4j.Properity
+      #用log4j要导入log4j 依赖就行
+      filters: stat,wall,log4j
+      maxPoolPreparedStatementPerConnectionSize: 20
+      useGlobalDataSourceStat: true
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+mybatis:
+  mapper-locations: classpath:mybatis/mapper/*.xml   # mapper映射文件位置
+  type-aliases-package: com.zhou.pojo    # 实体类所在的位置
   configuration:
-    #开启sql日志，这个配置会将执行的sql打印出来，在开发或测试的时候可以用
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl   #用于控制台打印sql语句

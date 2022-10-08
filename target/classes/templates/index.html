@@ -11,8 +11,6 @@
 <p>这是一个首页，不用登录就可以看到的界面</p>
 <hr>
 <a th:href="@{/toLogin}">主动登录</a>
-
-<!-- 用户有user:add权限才可以看得见下面这些-->
 <div shiro:hasPermission="user:add">
     <a th:href="@{/user/add}">add</a>  |<a th:href="@{/user/update}">update</a>   |    <a th:href="@{/tomain}">可以免费观看的页面</a>
     <a th:href="@{/tomain1}">高级页面</a> |<a th:href="@{/logout}">注销</a>

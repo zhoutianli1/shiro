@@ -46,6 +46,7 @@ public class shiroController {
         }
     }
 
+    //访问页面
     @RequestMapping("/user/add")
     public String add()
     {
@@ -56,7 +57,16 @@ public class shiroController {
     {
         return "user/update";
     }
-
+    @RequestMapping("/tomain")
+    public String main()
+    {
+        return "main";
+    }
+    @RequestMapping("/tomain1")
+    public String main1()
+    {
+        return "main1";
+    }
 
     @GetMapping("/{url}")
     public String redirect(@PathVariable("url") String url){
@@ -64,10 +74,17 @@ public class shiroController {
     }
 
 
-
+    //用户权限不足时
     @RequestMapping("/unauth")
     @ResponseBody
     public String unauth(){
         return "未授权没有访问权限";
+    }
+    //退出操作
+    @GetMapping("/logout")
+    public String logout(){
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();//退出操作
+        return "login";
     }
 }

@@ -1,5 +1,6 @@
 package com.zhou.Config;
 
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.zhou.Shiro.MyRealm;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -31,17 +32,26 @@ public class ShiroConfig {
     public ShiroFilterFactoryBean filterFactoryBean(@Qualifier("manager") DefaultWebSecurityManager manager){
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
         //关联manager，设置安全管理器
-        factoryBean.setSecurityManager(manager);
-        //实现拦截功能,，shiro只拦截设置的路径
+        factoryBean.setSecurityManager(manager); //注意授权过滤器要放在拦截过滤器前面
+
         Map<String,String> map = new HashMap<>();
-        map.put("/user/add","authc");
-        map.put("/user/update","anon");
-        map.put("/main","authc");
+
+        //授权过滤器：
+        map.put("/tomain1","perms[user:add]");
         map.put("/manage","perms[manage]");
         map.put("/administrator","roles[administrator]");
+
+        //拦截过滤器:，shiro只拦截设置的路径。shiro默认登录页面login.html
+        map.put("/user/add","authc");
+        map.put("/user/update","authc");
+        //map.put("/user/*
+        map.put("/tomain","anon");    //注意这里拦截的是请求 @RequestMapping("/tomain")  ；return "main"不会被拦截
+        //不能写成map.put("main","anon");
+
+
         factoryBean.setFilterChainDefinitionMap(map);    //设置一个过滤器链，需要参数 map：Map<String, String> filterChainDefinitionMap
 
-        //若没有权限，则需要跳转到登录页面。通过/toLogin请求跳转到login.html
+        //authc：必须认证（登录）。设置登录页面，通过/toLogin请求跳转到login.html
         factoryBean.setLoginUrl("/toLogin");
         //未授权页面
         factoryBean.setUnauthorizedUrl("/unauth");
@@ -72,5 +82,14 @@ public class ShiroConfig {
     @Bean //1第一个是自定义过滤器 MyRealm，我们的业务逻辑 "全部定义"在这个 bean 中。
     public MyRealm myRealm(){
         return new MyRealm();
+    }
+
+
+
+    //整合shiro和thymeleaf
+    @Bean
+    public ShiroDialect getShiroDialect()
+    {
+        return new ShiroDialect();
     }
 }
